@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>File Uploader</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      #dropzone {
+        border: 2px dashed #666;
+        padding: 50px;
+        cursor: pointer;
+        color: #666;
+        background: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Drag and Drop Files to Upload</h1>
+    <div id="dropzone">Drop files here or click to select</div>
+    <input type="file" id="fileInput" multiple style="display: none" />
+
+    <script>
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("fileInput");
+
+      dropzone.onclick = () => fileInput.click();
+
+      dropzone.ondragover = (e) => {
+        e.preventDefault();
+        dropzone.style.background = "#eee";
+      };
+
+      dropzone.ondragleave = () => {
+        dropzone.style.background = "#f9f9f9";
+      };
+
+      dropzone.ondrop = (e) => {
+        e.preventDefault();
+        dropzone.style.background = "#f9f9f9";
+        uploadFiles(e.dataTransfer.files);
+      };
+
+      fileInput.onchange = () => uploadFiles(fileInput.files);
+
+      function uploadFiles(files) {
+        const formData = new FormData();
+        for (let file of files) formData.append("files", file);
+
+        fetch("/upload", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.text())
+          .then(alert);
+      }
+    </script>
+  </body>
+</html>
